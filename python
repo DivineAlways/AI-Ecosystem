@@ -1,0 +1,74 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI(title="AI-Ecosystem API")
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, replace with specific origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/")
+async def root():
+    return {"message": "Welcome to AI-Ecosystem API"}
+from pydantic_settings import BaseSettings
+from typing import List
+import os
+
+class Settings(BaseSettings):
+    PROJECT_NAME: str = "AI-Ecosystem"
+    API_V1_STR: str = "/api/v1"
+    SECRET_KEY: str = os.getenv("SECRET_KEY", "your-secret-key-here")
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 days
+    ALGORITHM: str = "HS256"
+    
+    # Database
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./sql_app.db")
+    
+    # CORS
+    BACKEND_CORS_ORIGINS: List[str] = ["*"]
+
+settings = Settings()
+from fastapi import APIRouter
+
+router = APIRouter()
+
+@router.get("/health")
+async def health_check():
+    return {"status": "healthy"}
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.sql import func
+from sqlalchemy import Column, DateTime
+
+Base = declarative_base()
+
+class TimestampMixin:
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+from datetime import datetime, timedelta
+from typing import Optional
+from jose import JWTError, jwt
+from passlib.context import CryptContext
+from ..core.config import settings
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=15)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    return encoded_jwt
+
+def verify_password(plain_password: str, hashed_password: str):
+    return pwd_context.verify(plain_password, hashed_password)
+
+def get_password_hash(password: str):
+    return pwd_context.hash(password)
