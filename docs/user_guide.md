@@ -2,7 +2,7 @@
 
 ## System Requirements
 
-- Python 3.9+
+- Python 3.12+
 - Node.js 16+
 - Docker and Docker Compose (optional)
 - PostgreSQL (if not using Docker)
@@ -24,8 +24,9 @@ pip install -r requirements.txt
 ```
 
 3. Set up environment variables:
-   - Copy `.env.example` to `.env`
-   - Update the values in `.env` with your configuration
+   - Create a `.env` file with required variables:
+     - DATABASE_URL
+     - SECRET_KEY
 
 ### Frontend Setup
 
@@ -53,6 +54,14 @@ npm run serve
 ```
 The frontend will be available at http://localhost:8080
 
+### Running Tests
+
+To run the backend tests:
+```bash
+cd backend
+PYTHONPATH=$PWD pytest tests/ -v
+```
+
 ### Using Docker (Alternative)
 
 To run the entire system using Docker:
@@ -72,6 +81,25 @@ Once the backend is running, you can access:
 - Interactive API docs: http://localhost:8000/docs
 - Alternative API docs: http://localhost:8000/redoc
 
+## Project Structure
+
+```
+.
+├── backend/
+│   ├── app/
+│   │   ├── __init__.py
+│   │   ├── main.py
+│   │   └── core/
+│   │       └── config.py
+│   ├── tests/
+│   │   ├── __init__.py
+│   │   └── test_main.py
+│   └── requirements.txt
+├── frontend/
+├── docker/
+└── pytest.ini
+```
+
 ## Security Notes
 
 - The default configuration is for development only
@@ -86,7 +114,7 @@ Once the backend is running, you can access:
 Common issues:
 
 1. Module not found errors:
-   - Ensure you're in the correct directory
+   - Ensure PYTHONPATH is set correctly
    - Check that your virtual environment is activated
    - Verify all dependencies are installed
 
@@ -95,13 +123,12 @@ Common issues:
    - Ensure PostgreSQL is running
    - Verify database exists and credentials are correct
 
-3. Frontend build issues:
-   - Clear node_modules and reinstall:
-     ```bash
-     rm -rf node_modules
-     npm install
-     ```
+3. Test failures:
+   - Ensure you're running tests from the correct directory
+   - Check PYTHONPATH is set correctly
+   - Verify test dependencies are installed
 
 ## Version History
 
 - v0.1.0 - Initial setup with FastAPI backend and Vue.js frontend
+- v0.1.1 - Added testing infrastructure and documentation
