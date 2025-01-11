@@ -1,13 +1,16 @@
 <template>
   <div class="layout-wrapper">
-    <header class="header">
-      <div class="logo">AI-Ecosystem</div>
-      <nav class="nav-menu">
-        <router-link to="/" class="nav-link">Home</router-link>
-        <router-link to="/dashboard" class="nav-link">Dashboard</router-link>
-        <router-link to="/about" class="nav-link">About</router-link>
-      </nav>
-    </header>
+    <Menubar class="header" :model="menuItems">
+      <template #start>
+        <div class="logo">
+          <i class="pi pi-server mr-2"></i>
+          AI-Ecosystem
+        </div>
+      </template>
+      <template #end>
+        <Button icon="pi pi-user" class="p-button-rounded p-button-text" />
+      </template>
+    </Menubar>
     
     <main class="main-content">
       <router-view />
@@ -18,6 +21,39 @@
     </footer>
   </div>
 </template>
+
+<script>
+import Menubar from 'primevue/menubar';
+import Button from 'primevue/button';
+
+export default {
+  components: {
+    Menubar,
+    Button
+  },
+  data() {
+    return {
+      menuItems: [
+        {
+          label: 'Home',
+          icon: 'pi pi-home',
+          to: '/'
+        },
+        {
+          label: 'Dashboard',
+          icon: 'pi pi-chart-line',
+          to: '/dashboard'
+        },
+        {
+          label: 'About',
+          icon: 'pi pi-info-circle',
+          to: '/about'
+        }
+      ]
+    }
+  }
+}
+</script>
 
 <style lang="scss">
 .layout-wrapper {
