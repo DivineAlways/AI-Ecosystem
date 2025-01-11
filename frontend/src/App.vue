@@ -1,5 +1,5 @@
 <template>
-  <div class="layout-wrapper">
+  <div class="layout-wrapper" :class="{ 'dark-theme': isDarkTheme }">
     <Menubar class="header" :model="menuItems">
       <template #start>
         <div class="logo">
@@ -8,6 +8,12 @@
         </div>
       </template>
       <template #end>
+        <Button 
+          :icon="isDarkTheme ? 'pi pi-sun' : 'pi pi-moon'" 
+          class="p-button-rounded p-button-text mr-2"
+          @click="toggleTheme" 
+          v-tooltip.bottom="isDarkTheme ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+        />
         <Button icon="pi pi-user" class="p-button-rounded p-button-text" />
       </template>
     </Menubar>
@@ -25,14 +31,19 @@
 <script>
 import Menubar from 'primevue/menubar';
 import Button from 'primevue/button';
+import Tooltip from 'primevue/tooltip';
 
 export default {
   components: {
     Menubar,
     Button
   },
+  directives: {
+    tooltip: Tooltip
+  },
   data() {
     return {
+      isDarkTheme: false,
       menuItems: [
         {
           label: 'Home',
@@ -45,11 +56,33 @@ export default {
           to: '/dashboard'
         },
         {
+          label: 'Releases',
+          icon: 'pi pi-tag',
+          to: '/releases'
+        },
+        {
           label: 'About',
           icon: 'pi pi-info-circle',
           to: '/about'
         }
       ]
+    }
+  },
+  methods: {
+    toggleTheme() {
+      this.isDarkTheme = !this.isDarkTheme;
+      if (this.isDarkTheme) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    }
+  },
+  mounted() {
+    // Check system preference
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      this.isDarkTheme = true;
+      document.documentElement.setAttribute('data-theme', 'dark');
     }
   }
 }
