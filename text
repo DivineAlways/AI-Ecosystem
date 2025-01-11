@@ -1,0 +1,2 @@
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ai_ecosystem
+SECRET_KEY=your-secret-key-here
