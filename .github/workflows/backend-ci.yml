@@ -16,7 +16,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.9'
+        python-version: '3.12'
         
     - name: Install dependencies
       run: |
@@ -25,5 +25,4 @@ jobs:
         
     - name: Run tests
       run: |
-        cd backend
-        pytest
+        PYTHONPATH=$PWD pytest backend/tests/ -v
