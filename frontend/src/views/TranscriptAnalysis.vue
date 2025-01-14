@@ -127,16 +127,19 @@ export default {
           content = formatResponse.data;
           type = 'text/plain';
         }
-      
-      const blob = new Blob([content], { type });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
+        
+        const blob = new Blob([content], { type });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      } catch (err) {
+        this.error = err.message || 'Failed to download analysis result.';
+      }
     }
   }
 };
