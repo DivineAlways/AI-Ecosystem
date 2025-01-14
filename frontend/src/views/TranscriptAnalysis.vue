@@ -29,33 +29,47 @@
     </div>
     <div v-if="analysisResult" class="result-area">
       <h3>Analysis Results:</h3>
-      <div v-if="analysisResult.word_counts">
-        <h4>Word Frequencies:</h4>
-        <ul>
-          <li v-for="(count, word) in analysisResult.word_counts" :key="word">
-            {{ word }}: {{ count }}
-          </li>
-        </ul>
-      </div>
-      <div v-if="analysisResult.quick_summary">
-        <h4>Quick Summary:</h4>
-        <p>{{ analysisResult.quick_summary }}</p>
-      </div>
-      <div v-if="analysisResult.bullet_point_highlights && analysisResult.bullet_point_highlights.length">
-        <h4>Bullet Point Highlights:</h4>
-        <ul>
-          <li v-for="(point, index) in analysisResult.bullet_point_highlights" :key="index">{{ point }}</li>
-        </ul>
-      </div>
-      <div v-if="analysisResult.sentiment_analysis">
-        <h4>Sentiment Analysis:</h4>
-        <p>{{ analysisResult.sentiment_analysis }}</p>
-      </div>
-      <div v-if="analysisResult.keywords && analysisResult.keywords.length">
-        <h4>Keywords:</h4>
-        <ul>
-          <li v-for="(keyword, index) in analysisResult.keywords" :key="index">{{ keyword }}</li>
-        </ul>
+      <div class="result-grid">
+        <div class="result-card">
+          <h4>Word Frequencies</h4>
+          <div class="word-freq">
+            <div v-for="(count, word) in analysisResult.raw.word_counts" :key="word" class="word-item">
+              <span class="word">{{ word }}</span>
+              <span class="count">{{ count }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="result-card">
+          <h4>Quick Summary</h4>
+          <p>{{ analysisResult.raw.quick_summary }}</p>
+        </div>
+        
+        <div class="result-card">
+          <h4>Sentiment Analysis</h4>
+          <p>{{ analysisResult.raw.sentiment_analysis }}</p>
+        </div>
+        
+        <div class="result-card">
+          <h4>Keywords</h4>
+          <div class="keywords">
+            <span v-for="(keyword, index) in analysisResult.raw.keywords" 
+                  :key="index" 
+                  class="keyword-tag">
+              {{ keyword }}
+            </span>
+          </div>
+        </div>
+        
+        <div class="result-card full-width">
+          <h4>Highlights</h4>
+          <ul class="highlights-list">
+            <li v-for="(point, index) in analysisResult.raw.bullet_point_highlights" 
+                :key="index">
+              {{ point }}
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
     <div v-if="error" class="error-area">
@@ -131,7 +145,7 @@ export default {
           content = JSON.stringify(formatResponse.data, null, 2);
           type = 'application/json';
         } else if (this.outputFormat === 'yaml') {
-          content = formatResponse.data;
+          content = formatResponse.data.formatted;
           type = 'application/x-yaml';
         } else {
           content = formatResponse.data;
@@ -233,5 +247,85 @@ export default {
   padding: 10px;
   border-radius: 4px;
   background-color: #ffebee;
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.result-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.result-card h4 {
+  margin-top: 0;
+  color: #2196F3;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.word-freq {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.word-item {
+  background: #e3f2fd;
+  padding: 5px 10px;
+  border-radius: 15px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.word {
+  font-weight: bold;
+}
+
+.count {
+  background: #2196F3;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.9em;
+}
+
+.keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.keyword-tag {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 0.9em;
+}
+
+.highlights-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.highlights-list li {
+  padding: 10px;
+  background: #fafafa;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  border-left: 4px solid #2196F3;
 }
 </style>
