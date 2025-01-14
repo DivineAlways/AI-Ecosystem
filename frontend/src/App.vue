@@ -48,7 +48,7 @@
         <div class="col-12 md:col-4">
           <h4>Quick Links</h4>
           <ul>
-            <li><router-link to="/docs">Documentation</router-link></li>
+            <li><router-link to="/tutorial">Documentation</router-link></li>
             <li><router-link to="/tutorial">Tutorials</router-link></li>
             <li><router-link to="/about">About Us</router-link></li>
           </ul>
@@ -130,12 +130,12 @@ export default {
           {
             label: 'Documentation',
             icon: 'pi pi-file',
-            to: '/docs'
+            to: '/tutorial'
           },
           {
-            label: 'Tutorials',
-            icon: 'pi pi-video',
-            to: '/tutorial'
+            label: 'Release History',
+            icon: 'pi pi-history',
+            to: '/releases'
           },
           {
             label: 'Support',
