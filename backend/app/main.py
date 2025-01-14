@@ -49,21 +49,41 @@ async def analyze_transcript(
         with open(tmp_file_path, "w", encoding="utf-8") as f:
             f.write(text_content)
 
-        # For testing, return a mock analysis result
+        # Perform actual analysis on the text content
+        words = text_content.lower().split()
+        
+        # Calculate word frequencies
+        word_counts = {}
+        for word in words:
+            if len(word) > 2:  # Skip very short words
+                word_counts[word] = word_counts.get(word, 0) + 1
+        
+        # Sort by frequency and get top words
+        sorted_words = sorted(word_counts.items(), key=lambda x: x[1], reverse=True)
+        top_words = dict(sorted_words[:10])
+        
+        # Extract sentences for bullet points
+        sentences = [s.strip() for s in text_content.split('.') if s.strip()]
+        key_sentences = sentences[:3]  # Take first 3 sentences as highlights
+        
+        # Basic sentiment analysis
+        positive_words = {'improve', 'transforming', 'future', 'help', 'automated'}
+        negative_words = {'complex', 'difficult', 'problem', 'issue'}
+        
+        sentiment_score = sum(1 for word in words if word in positive_words)
+        sentiment_score -= sum(1 for word in words if word in negative_words)
+        
+        sentiment = "Positive" if sentiment_score > 0 else "Negative" if sentiment_score < 0 else "Neutral"
+        
+        # Extract keywords (words that appear more than once)
+        keywords = [word for word, count in word_counts.items() if count > 1]
+        
         return {
-            "word_counts": {
-                "ai": 4,
-                "analysis": 2,
-                "tools": 1
-            },
-            "quick_summary": "The text discusses AI and its applications.",
-            "bullet_point_highlights": [
-                "AI and machine learning transformation",
-                "Software engineering future",
-                "Developer productivity"
-            ],
-            "sentiment_analysis": "Positive discussion about AI technology",
-            "keywords": ["AI", "machine learning", "software engineering", "productivity"]
+            "word_counts": top_words,
+            "quick_summary": f"Analysis of {len(words)} words and {len(sentences)} sentences.",
+            "bullet_point_highlights": key_sentences,
+            "sentiment_analysis": f"{sentiment} tone detected in the text",
+            "keywords": keywords[:5]  # Top 5 keywords
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
