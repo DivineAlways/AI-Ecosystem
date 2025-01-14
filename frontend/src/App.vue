@@ -130,7 +130,7 @@ export default {
           {
             label: 'Documentation',
             icon: 'pi pi-file',
-            to: '/tutorial'
+            to: '/documentation'
           },
           {
             label: 'Release History',
