@@ -98,6 +98,14 @@
                     @click="$router.push('/tutorial')" 
                   />
                 </div>
+                <div class="col-12 md:col-4">
+                  <Button
+                    label="Analyze Transcript"
+                    icon="pi pi-file-edit"
+                    class="p-button-lg w-full p-button-success"
+                    @click="$router.push('/transcript-analysis')"
+                  />
+                </div>
               </div>
             </template>
           </Card>
