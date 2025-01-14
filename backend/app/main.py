@@ -3,7 +3,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import os
 import tempfile
-from tenacity import retry, stop_after_attempt, wait_exponential, RetryError
+import httpx
+from tenacity import (
+    retry,
+    stop_after_attempt,
+    wait_exponential,
+    RetryError,
+    retry_if_exception_type
+)
 from .core.config import settings
 from .core.output_format import format_output
 from .core.word_counter import word_counter
