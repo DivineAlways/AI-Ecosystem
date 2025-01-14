@@ -2,11 +2,11 @@
   <div class="transcript-analysis-view">
     <h2>Transcript Analysis</h2>
     <div class="input-area">
-      <label for="transcript-input">Enter Transcript:</label>
-      <textarea id="transcript-input" v-model="transcript" rows="10" cols="80"></textarea>
+      <label for="transcript-input">Upload Transcript:</label>
+      <input type="file" id="transcript-input" @change="handleFileUpload" accept=".txt,.text" />
     </div>
     <div class="button-area">
-      <button @click="analyzeTranscript">Analyze Transcript</button>
+      <button @click="analyzeTranscript" :disabled="!file">Analyze Transcript</button>
     </div>
     <div v-if="analysisResult" class="result-area">
       <h3>Analysis Results:</h3>
@@ -43,18 +43,29 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      transcript: '',
+      file: null,
       analysisResult: null,
       error: null
     };
   },
   methods: {
+    handleFileUpload(event) {
+      this.file = event.target.files[0];
+    },
     async analyzeTranscript() {
       this.analysisResult = null;
       this.error = null;
+      if (!this.file) {
+        this.error = 'Please upload a transcript file.';
+        return;
+      }
       try {
-        const response = await axios.post('/api/v1/analyze-transcript', {
-          transcript: this.transcript
+        const formData = new FormData();
+        formData.append('transcript', this.file);
+        const response = await axios.post('/api/v1/analyze-transcript', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
         });
         this.analysisResult = response.data;
       } catch (err) {
