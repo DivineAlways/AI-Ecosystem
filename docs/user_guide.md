@@ -1,5 +1,9 @@
 # AI-Ecosystem User Guide
 
+## Overview
+
+AI-Ecosystem is an advanced AI-powered platform that combines transcript analysis capabilities with an AI Director system for automated code improvements.
+
 ## System Requirements
 
 - Python 3.12+
@@ -89,8 +93,14 @@ Once the backend is running, you can access:
 │   ├── app/
 │   │   ├── __init__.py
 │   │   ├── main.py
-│   │   └── core/
-│   │       └── config.py
+│   │   ├── core/
+│   │   │   └── config.py
+│   │   └── director/
+│   │       ├── __init__.py
+│   │       ├── director.py
+│   │       ├── evaluator.py
+│   │       └── specs/
+│   │           └── basic.yaml
 │   ├── tests/
 │   │   ├── __init__.py
 │   │   └── test_main.py
@@ -99,6 +109,44 @@ Once the backend is running, you can access:
 ├── docker/
 └── pytest.ini
 ```
+
+## AI Director
+
+The AI Director is a self-improving system that can automatically enhance code quality. It works through an iterative process of:
+1. Analyzing existing code
+2. Generating improvements
+3. Testing changes
+4. Evaluating results
+
+### Using the AI Director
+
+1. Install the package in development mode:
+```bash
+cd backend
+pip install -e .
+```
+
+2. Run the director with default configuration:
+```bash
+python run_director.py
+```
+
+3. Or specify a custom config file:
+```bash
+python run_director.py --config path/to/config.yaml
+```
+
+### Configuration
+
+The AI Director is configured through YAML files in `backend/app/director/specs/`. Key settings include:
+
+- `prompt`: The improvement goal
+- `coder_model`: AI model for code generation (gpt-4 or gpt-3.5-turbo)
+- `evaluator_model`: AI model for evaluation
+- `max_iterations`: Maximum improvement attempts
+- `execution_command`: Command to validate changes
+- `context_editable`: Files that can be modified
+- `context_read_only`: Reference-only files
 
 ## Security Notes
 
