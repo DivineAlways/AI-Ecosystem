@@ -68,14 +68,16 @@ async def analyze_transcript(
         
         # Use LLM for advanced analysis
         from .core.llm import analyze_transcript
-        analysis_result = analyze_transcript(text_content, word_count_result.word_counts)
+        # Get analysis results from LLM
+        llm_analysis = analyze_transcript(text_content, word_count_result.word_counts)
         
+        # Combine word counts with LLM analysis
         analysis_result = {
-            "word_counts": top_words,
-            "quick_summary": f"Analysis of {len(words)} words and {len(sentences)} sentences.",
-            "bullet_point_highlights": key_sentences,
-            "sentiment_analysis": f"{sentiment} tone detected in the text",
-            "keywords": keywords[:5]  # Top 5 keywords
+            "word_counts": word_count_result.word_counts,
+            "quick_summary": llm_analysis.quick_summary,
+            "bullet_point_highlights": llm_analysis.bullet_point_highlights,
+            "sentiment_analysis": llm_analysis.sentiment_analysis,
+            "keywords": llm_analysis.keywords
         }
         
         # Format the output according to the requested format
