@@ -92,16 +92,14 @@ export default {
         formData.append('transcript', this.file);
         formData.append('output_format', this.outputFormat);
         
-        const response = await axios.post('http://localhost:8000/analyze-transcript', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          },
-          responseType: 'json'
-        });
+        const response = await axios.post('http://localhost:8000/analyze-transcript', formData);
+        console.log('Response:', response); // Debug log
         
-        if (response.data) {
+        if (response && response.data) {
           this.analysisResult = response.data;
+          console.log('Analysis Result:', this.analysisResult); // Debug log
         } else {
+          console.error('No data in response'); // Debug log
           throw new Error('No data received from server');
         }
       } catch (err) {

@@ -96,7 +96,11 @@ async def analyze_transcript(
             with open(output_file, "w", encoding="utf-8") as f:
                 f.write(formatted_output)
         
-        return analysis_result
+        # Return both raw and formatted data
+        return {
+            "raw": analysis_result,
+            "formatted": formatted_output
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
     finally:
