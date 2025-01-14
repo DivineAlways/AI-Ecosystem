@@ -1,8 +1,9 @@
-from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi import FastAPI, HTTPException, UploadFile, File, Query
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import tempfile
 from .core.config import settings
+from .core.output_format import format_output
 
 app = FastAPI(title=settings.PROJECT_NAME)
 
@@ -24,7 +25,8 @@ async def analyze_transcript(
     transcript: UploadFile = File(...),
     chart_type: str | None = None,
     min_count_threshold: int = 10,
-    output_file: str | None = None
+    output_file: str | None = None,
+    output_format: str = Query("json", enum=["json", "yaml", "text"])
 ) -> dict:
     if not transcript or not transcript.filename:
         raise HTTPException(status_code=400, detail="No file uploaded")
@@ -78,13 +80,23 @@ async def analyze_transcript(
         # Extract keywords (words that appear more than once)
         keywords = [word for word, count in word_counts.items() if count > 1]
         
-        return {
+        analysis_result = {
             "word_counts": top_words,
             "quick_summary": f"Analysis of {len(words)} words and {len(sentences)} sentences.",
             "bullet_point_highlights": key_sentences,
             "sentiment_analysis": f"{sentiment} tone detected in the text",
             "keywords": keywords[:5]  # Top 5 keywords
         }
+        
+        # Format the output according to the requested format
+        formatted_output = format_output(analysis_result, output_format)
+        
+        # If output file is specified, write the formatted output to file
+        if output_file:
+            with open(output_file, "w", encoding="utf-8") as f:
+                f.write(formatted_output)
+        
+        return analysis_result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
     finally:
