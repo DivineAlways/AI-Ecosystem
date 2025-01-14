@@ -88,15 +88,20 @@ async def analyze_transcript(
                     sentiment_analysis="Neutral",
                     keywords=list(word_count_result.word_counts.keys())[:5]
                 )
-        
-        # Combine word counts with LLM analysis
-        analysis_result = {
-            "word_counts": word_count_result.word_counts,
-            "quick_summary": llm_analysis.quick_summary,
-            "bullet_point_highlights": llm_analysis.bullet_point_highlights,
-            "sentiment_analysis": llm_analysis.sentiment_analysis,
-            "keywords": llm_analysis.keywords
-        }
+
+            # Combine word counts with LLM analysis
+            analysis_result = {
+                "word_counts": word_count_result.word_counts,
+                "quick_summary": llm_analysis.quick_summary,
+                "bullet_point_highlights": llm_analysis.bullet_point_highlights,
+                "sentiment_analysis": llm_analysis.sentiment_analysis,
+                "keywords": llm_analysis.keywords
+            }
+            
+            return analysis_result
+
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
         
         # Format the output according to the requested format
         formatted_output = format_output(analysis_result, output_format)
