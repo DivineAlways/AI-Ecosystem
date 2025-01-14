@@ -1,9 +1,8 @@
 import os
 import tempfile
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Annotated
-from ..core.config import settings
+from core.config import settings
 from agentic_features.paicc_7.src.let_the_code_write_itself.main import analyze_transcript as paicc_analyze_transcript
 from agentic_features.paicc_7.src.let_the_code_write_itself.data_types import TranscriptAnalysis
 from pydantic import BaseModel
@@ -30,18 +29,26 @@ async def root():
     return {"message": "Welcome to AI-Ecosystem API"}
 
 @app.post("/analyze-transcript", response_model=TranscriptAnalysis)
-@app.post("/analyze-transcript", response_model=TranscriptAnalysis)
 async def analyze_transcript(
     min_count_threshold: int = 10,
     chart_type: str | None = None,
     output_file: str | None = None,
     transcript: UploadFile = File(...)
 ):
+    if not transcript.filename.endswith(('.txt', '.text')):
+        raise HTTPException(status_code=400, detail="File must be a text file (.txt or .text)")
+
+    tmp_file_path = None
     try:
         # Create a temporary file
         with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".txt") as tmp_file:
             content = await transcript.read()
-            tmp_file.write(content.decode("utf-8"))
+            try:
+                text_content = content.decode("utf-8")
+            except UnicodeDecodeError:
+                raise HTTPException(status_code=400, detail="File must be a valid UTF-8 text file")
+            
+            tmp_file.write(text_content)
             tmp_file_path = tmp_file.name
 
         # Call the paicc analyze_transcript function with the temporary file path
@@ -51,8 +58,13 @@ async def analyze_transcript(
             chart_type=chart_type,
             output_file=output_file
         )
-        # Delete the temporary file
-        os.remove(tmp_file_path)
         return analysis_result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+    finally:
+        # Always clean up the temporary file
+        if tmp_file_path and os.path.exists(tmp_file_path):
+            try:
+                os.remove(tmp_file_path)
+            except:
+                pass  # Ignore cleanup errors
