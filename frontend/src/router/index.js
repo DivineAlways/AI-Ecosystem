@@ -3,6 +3,11 @@ import Home from '../views/Home.vue'
 
 const routes = [
   {
+    path: '/tutorial',
+    name: 'Tutorial',
+    component: () => import('../views/Tutorial.vue')
+  },
+  {
     path: '/',
     name: 'Home',
     component: Home

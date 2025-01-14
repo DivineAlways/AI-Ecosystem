@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import PrimeVue from 'primevue/config'
+import ScrollPanel from 'primevue/scrollpanel'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Menubar from 'primevue/menubar'
@@ -32,6 +33,7 @@ app.component('Menubar', Menubar)
 app.component('Timeline', Timeline)
 app.component('Tag', Tag)
 app.component('Badge', Badge)
+app.component('ScrollPanel', ScrollPanel)
 app.directive('tooltip', Tooltip)
 
 app.mount('#app')
