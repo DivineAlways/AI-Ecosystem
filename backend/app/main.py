@@ -51,34 +51,24 @@ async def analyze_transcript(
         with open(tmp_file_path, "w", encoding="utf-8") as f:
             f.write(text_content)
 
-        # Perform actual analysis on the text content
-        words = text_content.lower().split()
+        # Use word counter from agentic features
+        from .core.word_counter import word_counter
+        word_count_result = word_counter(text_content, min_count_threshold)
         
-        # Calculate word frequencies
-        word_counts = {}
-        for word in words:
-            if len(word) > 2:  # Skip very short words
-                word_counts[word] = word_counts.get(word, 0) + 1
+        # Generate charts if requested
+        if chart_type:
+            from .core.chart import create_bar_chart, create_pie_chart, create_line_chart
+            chart_functions = {
+                'bar': create_bar_chart,
+                'pie': create_pie_chart,
+                'line': create_line_chart
+            }
+            if chart_type in chart_functions:
+                chart_functions[chart_type](word_count_result)
         
-        # Sort by frequency and get top words
-        sorted_words = sorted(word_counts.items(), key=lambda x: x[1], reverse=True)
-        top_words = dict(sorted_words[:10])
-        
-        # Extract sentences for bullet points
-        sentences = [s.strip() for s in text_content.split('.') if s.strip()]
-        key_sentences = sentences[:3]  # Take first 3 sentences as highlights
-        
-        # Basic sentiment analysis
-        positive_words = {'improve', 'transforming', 'future', 'help', 'automated'}
-        negative_words = {'complex', 'difficult', 'problem', 'issue'}
-        
-        sentiment_score = sum(1 for word in words if word in positive_words)
-        sentiment_score -= sum(1 for word in words if word in negative_words)
-        
-        sentiment = "Positive" if sentiment_score > 0 else "Negative" if sentiment_score < 0 else "Neutral"
-        
-        # Extract keywords (words that appear more than once)
-        keywords = [word for word, count in word_counts.items() if count > 1]
+        # Use LLM for advanced analysis
+        from .core.llm import analyze_transcript
+        analysis_result = analyze_transcript(text_content, word_count_result.word_counts)
         
         analysis_result = {
             "word_counts": top_words,
