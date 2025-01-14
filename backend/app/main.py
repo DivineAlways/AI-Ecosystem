@@ -54,25 +54,40 @@ async def analyze_transcript(
         with open(tmp_file_path, "w", encoding="utf-8") as f:
             f.write(text_content)
 
-        # Use word counter from agentic features
-        from .core.word_counter import word_counter
-        word_count_result = word_counter(text_content, min_count_threshold)
-        
-        # Generate charts if requested
-        chart_path = None
-        if chart_type:
-            chart_functions = {
-                'bar': create_bar_chart,
-                'pie': create_pie_chart,
-                'line': create_line_chart
-            }
-            if chart_type in chart_functions:
-                chart_path = chart_functions[chart_type](word_count_result)
-        
-        # Use LLM for advanced analysis
-        from .core.llm import analyze_transcript
-        # Get analysis results from LLM
-        llm_analysis = analyze_transcript(text_content, word_count_result.word_counts)
+        try:
+            # Use word counter
+            word_count_result = word_counter(text_content, min_count_threshold)
+            print(f"Word counting completed. Found {len(word_count_result.word_counts)} unique words.")
+            
+            # Generate charts if requested
+            chart_path = None
+            if chart_type:
+                chart_functions = {
+                    'bar': create_bar_chart,
+                    'pie': create_pie_chart,
+                    'line': create_line_chart
+                }
+                if chart_type in chart_functions:
+                    try:
+                        chart_path = chart_functions[chart_type](word_count_result)
+                        print(f"Chart generated successfully at {chart_path}")
+                    except Exception as e:
+                        print(f"Chart generation failed: {str(e)}")
+                        chart_path = None
+            
+            # Use LLM for advanced analysis
+            try:
+                llm_analysis = analyze_transcript(text_content, word_count_result.word_counts)
+                print("LLM analysis completed successfully")
+            except Exception as e:
+                print(f"LLM analysis failed: {str(e)}")
+                # Provide fallback analysis
+                llm_analysis = TranscriptAnalysis(
+                    quick_summary="Analysis currently unavailable",
+                    bullet_point_highlights=["Unable to generate highlights"],
+                    sentiment_analysis="Neutral",
+                    keywords=list(word_count_result.word_counts.keys())[:5]
+                )
         
         # Combine word counts with LLM analysis
         analysis_result = {
