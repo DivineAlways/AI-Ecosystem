@@ -1,7 +1,9 @@
-from fastapi import FastAPI, HTTPException, UploadFile, File, Query
+from fastapi import FastAPI, HTTPException, UploadFile, File, Query, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 import os
 import tempfile
+from tenacity import retry, stop_after_attempt, wait_exponential, RetryError
 from .core.config import settings
 from .core.output_format import format_output
 from .core.word_counter import word_counter
@@ -24,7 +26,16 @@ app.add_middleware(
 async def root():
     return {"message": f"Welcome to {settings.PROJECT_NAME} API"}
 
-@app.post("/analyze-transcript")
+@app.post("/analyze-transcript", 
+    responses={
+        503: {"description": "Service temporarily unavailable due to network issues"},
+        500: {"description": "Internal server error"},
+        400: {"description": "Invalid input"}
+    })
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(multiplier=1, min=4, max=10)
+)
 async def analyze_transcript(
     transcript: UploadFile = File(...),
     chart_type: str | None = None,
@@ -124,8 +135,22 @@ async def analyze_transcript(
             response_data["output_file"] = output_path
         
         return response_data
+    except RetryError as e:
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            content={
+                "detail": "Service temporarily unavailable due to network issues. Please try again later.",
+                "error": str(e)
+            }
+        )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={
+                "detail": f"Analysis failed: {str(e)}",
+                "error": str(e)
+            }
+        )
     finally:
         if tmp_file_path and os.path.exists(tmp_file_path):
             try:
