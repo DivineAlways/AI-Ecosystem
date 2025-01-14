@@ -5,8 +5,27 @@
       <label for="transcript-input">Upload Transcript:</label>
       <input type="file" id="transcript-input" @change="handleFileUpload" accept=".txt,.text" />
     </div>
-    <div class="button-area">
-      <button @click="analyzeTranscript" :disabled="!file">Analyze Transcript</button>
+    <div class="options-area">
+      <div class="format-selector">
+        <label for="format-select">Output Format:</label>
+        <select v-model="outputFormat" id="format-select">
+          <option value="json">JSON</option>
+          <option value="yaml">YAML</option>
+          <option value="text">Text</option>
+        </select>
+      </div>
+      <div class="button-area">
+        <button @click="analyzeTranscript" :disabled="!file" class="analyze-btn">
+          Analyze Transcript
+        </button>
+        <button 
+          v-if="analysisResult" 
+          @click="downloadResult" 
+          class="download-btn"
+        >
+          Download Results
+        </button>
+      </div>
     </div>
     <div v-if="analysisResult" class="result-area">
       <h3>Analysis Results:</h3>
@@ -45,7 +64,8 @@ export default {
     return {
       file: null,
       analysisResult: null,
-      error: null
+      error: null,
+      outputFormat: 'json'
     };
   },
   methods: {
@@ -62,15 +82,45 @@ export default {
       try {
         const formData = new FormData();
         formData.append('transcript', this.file);
+        formData.append('output_format', this.outputFormat);
+        
         const response = await axios.post('http://localhost:8000/analyze-transcript', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
-          }
+          },
+          responseType: this.outputFormat === 'json' ? 'json' : 'text'
         });
         this.analysisResult = response.data;
       } catch (err) {
         this.error = err.message || 'Failed to analyze transcript.';
       }
+    },
+    downloadResult() {
+      if (!this.analysisResult) return;
+      
+      let content = '';
+      let filename = `analysis-result.${this.outputFormat}`;
+      let type = 'text/plain';
+      
+      if (this.outputFormat === 'json') {
+        content = JSON.stringify(this.analysisResult, null, 2);
+        type = 'application/json';
+      } else if (this.outputFormat === 'yaml') {
+        content = this.analysisResult; // Already in YAML format
+        type = 'application/x-yaml';
+      } else {
+        content = this.analysisResult; // Text format
+      }
+      
+      const blob = new Blob([content], { type });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
     }
   }
 };
@@ -79,6 +129,8 @@ export default {
 <style scoped>
 .transcript-analysis-view {
   padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .input-area {
@@ -88,20 +140,69 @@ export default {
 .input-area label {
   display: block;
   margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.options-area {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.format-selector {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.format-selector select {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
 }
 
 .button-area {
-  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.analyze-btn, .download-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.analyze-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.analyze-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.download-btn {
+  background-color: #2196F3;
+  color: white;
 }
 
 .result-area {
   margin-top: 20px;
   border: 1px solid #ddd;
-  padding: 10px;
+  border-radius: 4px;
+  padding: 20px;
+  background-color: #f9f9f9;
 }
 
 .error-area {
-  color: red;
+  color: #f44336;
   margin-top: 10px;
+  padding: 10px;
+  border-radius: 4px;
+  background-color: #ffebee;
 }
 </style>
