@@ -62,7 +62,7 @@ export default {
       try {
         const formData = new FormData();
         formData.append('transcript', this.file);
-        const response = await axios.post('/api/v1/analyze-transcript', formData, {
+        const response = await axios.post('http://localhost:8000/analyze-transcript', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
