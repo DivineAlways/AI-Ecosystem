@@ -9,6 +9,7 @@ import Menubar from 'primevue/menubar'
 import Timeline from 'primevue/timeline'
 import Tag from 'primevue/tag'
 import Tooltip from 'primevue/tooltip'
+import Badge from 'primevue/badge'
 
 import 'primevue/resources/themes/lara-light-blue/theme.css'
 import 'primevue/resources/themes/lara-dark-blue/theme.css'
@@ -30,6 +31,7 @@ app.component('Card', Card)
 app.component('Menubar', Menubar)
 app.component('Timeline', Timeline)
 app.component('Tag', Tag)
+app.component('Badge', Badge)
 app.directive('tooltip', Tooltip)
 
 app.mount('#app')
