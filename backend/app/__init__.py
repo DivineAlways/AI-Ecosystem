@@ -35,21 +35,30 @@ async def analyze_transcript(
     output_file: str | None = None,
     transcript: UploadFile = File(...)
 ):
+    if not transcript or not transcript.filename:
+        raise HTTPException(status_code=400, detail="No file uploaded")
+
     if not transcript.filename.endswith(('.txt', '.text')):
         raise HTTPException(status_code=400, detail="File must be a text file (.txt or .text)")
 
     tmp_file_path = None
     try:
-        # Create a temporary file
-        with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".txt") as tmp_file:
-            content = await transcript.read()
-            try:
-                text_content = content.decode("utf-8")
-            except UnicodeDecodeError:
-                raise HTTPException(status_code=400, detail="File must be a valid UTF-8 text file")
-            
-            tmp_file.write(text_content)
-            tmp_file_path = tmp_file.name
+        # Read file content first to validate
+        content = await transcript.read()
+        if not content:
+            raise HTTPException(status_code=400, detail="Uploaded file is empty")
+
+        try:
+            text_content = content.decode("utf-8")
+        except UnicodeDecodeError:
+            raise HTTPException(status_code=400, detail="File must be a valid UTF-8 text file")
+
+        # Create temporary file and write content
+        tmp_file = tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".txt")
+        tmp_file_path = tmp_file.name
+        
+        with open(tmp_file_path, "w", encoding="utf-8") as f:
+            f.write(text_content)
 
         # Call the paicc analyze_transcript function with the temporary file path
         analysis_result = paicc_analyze_transcript(
