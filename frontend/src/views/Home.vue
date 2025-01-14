@@ -5,48 +5,103 @@
         <img alt="AI Banner" src="@/assets/ai-banner.jpg" />
       </template>
       <template #title>
-        Welcome to AI Ecosystem
+        <h1 class="text-4xl font-bold mb-2">Welcome to AI Ecosystem</h1>
       </template>
       <template #content>
-        <p class="text-xl mb-4">Your intelligent solution for AI management and deployment</p>
+        <p class="text-xl mb-4">Your comprehensive platform for AI model management, 3D environments, and intelligent automation</p>
+        
         <div class="grid">
-          <div class="col-12 md:col-4">
+          <div class="col-12 md:col-3">
             <Card class="feature-card">
               <template #header>
                 <i class="pi pi-cog text-4xl text-primary"></i>
               </template>
-              <template #title>Easy Management</template>
+              <template #title>Model Management</template>
               <template #content>
-                Manage your AI models with intuitive controls
+                <p>Deploy and manage AI models with enterprise-grade controls</p>
+                <Tag value="HIPAA Compliant" severity="success" class="mt-2" />
               </template>
             </Card>
           </div>
-          <div class="col-12 md:col-4">
+          
+          <div class="col-12 md:col-3">
             <Card class="feature-card">
               <template #header>
-                <i class="pi pi-bolt text-4xl text-primary"></i>
+                <i class="pi pi-cube text-4xl text-primary"></i>
               </template>
-              <template #title>Fast Deployment</template>
+              <template #title>3D Environments</template>
               <template #content>
-                Deploy models to production in minutes
+                <p>Create and simulate 3D environments for training and testing</p>
+                <Tag value="Omniverse Ready" severity="info" class="mt-2" />
               </template>
             </Card>
           </div>
-          <div class="col-12 md:col-4">
+          
+          <div class="col-12 md:col-3">
             <Card class="feature-card">
               <template #header>
-                <i class="pi pi-chart-bar text-4xl text-primary"></i>
+                <i class="pi pi-users text-4xl text-primary"></i>
               </template>
-              <template #title>Real-time Analytics</template>
+              <template #title>Agent Systems</template>
               <template #content>
-                Monitor performance and usage metrics
+                <p>Deploy intelligent agents for automated decision making</p>
+                <Tag value="Multi-Agent" severity="warning" class="mt-2" />
+              </template>
+            </Card>
+          </div>
+          
+          <div class="col-12 md:col-3">
+            <Card class="feature-card">
+              <template #header>
+                <i class="pi pi-shield text-4xl text-primary"></i>
+              </template>
+              <template #title>Enterprise Security</template>
+              <template #content>
+                <p>Built-in security features for business compliance</p>
+                <Tag value="Government Ready" severity="danger" class="mt-2" />
               </template>
             </Card>
           </div>
         </div>
-      </template>
-      <template #footer>
-        <Button label="Get Started" icon="pi pi-arrow-right" class="p-button-lg" @click="$router.push('/dashboard')" />
+
+        <div class="mt-4">
+          <Card>
+            <template #title>
+              <div class="flex align-items-center">
+                <i class="pi pi-check-circle mr-2"></i>
+                Getting Started
+              </div>
+            </template>
+            <template #content>
+              <div class="grid">
+                <div class="col-12 md:col-4">
+                  <Button 
+                    label="Launch Dashboard" 
+                    icon="pi pi-arrow-right" 
+                    class="p-button-lg w-full"
+                    @click="$router.push('/dashboard')" 
+                  />
+                </div>
+                <div class="col-12 md:col-4">
+                  <Button 
+                    label="View Documentation" 
+                    icon="pi pi-book" 
+                    class="p-button-lg w-full p-button-secondary"
+                    @click="$router.push('/docs')" 
+                  />
+                </div>
+                <div class="col-12 md:col-4">
+                  <Button 
+                    label="Watch Tutorial" 
+                    icon="pi pi-video" 
+                    class="p-button-lg w-full p-button-help"
+                    @click="$router.push('/tutorial')" 
+                  />
+                </div>
+              </div>
+            </template>
+          </Card>
+        </div>
       </template>
     </Card>
   </div>
