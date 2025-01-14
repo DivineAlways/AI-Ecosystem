@@ -1,3 +1,5 @@
+import os
+import tempfile
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Annotated
@@ -30,13 +32,20 @@ async def root():
 @app.post("/analyze-transcript", response_model=TranscriptAnalysis)
 async def analyze_transcript(request: AnalysisRequest):
     try:
-        # Call the paicc analyze_transcript function
+        # Create a temporary file
+        with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".txt") as tmp_file:
+            tmp_file.write(request.transcript)
+            tmp_file_path = tmp_file.name
+
+        # Call the paicc analyze_transcript function with the temporary file path
         analysis_result = paicc_analyze_transcript(
-            path_to_script_text_file=request.transcript,
+            path_to_script_text_file=tmp_file_path,
             min_count_threshold=request.min_count_threshold,
             chart_type=request.chart_type,
             output_file=request.output_file
         )
+        # Delete the temporary file
+        os.remove(tmp_file_path)
         return analysis_result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
