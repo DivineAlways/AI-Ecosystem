@@ -54,6 +54,15 @@ def format_output(analysis_result: Dict, format_type: str = "json") -> str:
     Returns:
         Formatted string in the specified format
     """
+    # Ensure all dictionary values exist
+    analysis_result = {
+        "word_counts": analysis_result.get("word_counts", {}),
+        "quick_summary": analysis_result.get("quick_summary", "No summary available"),
+        "bullet_point_highlights": analysis_result.get("bullet_point_highlights", []),
+        "sentiment_analysis": analysis_result.get("sentiment_analysis", "Neutral"),
+        "keywords": analysis_result.get("keywords", [])
+    }
+    
     formatters = {
         "json": format_as_json,
         "yaml": format_as_yaml,

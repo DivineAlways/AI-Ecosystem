@@ -83,16 +83,22 @@ async def analyze_transcript(
         # Format the output according to the requested format
         formatted_output = format_output(analysis_result, output_format)
         
-        # If output file is specified, write the formatted output to file
-        if output_file:
-            with open(output_file, "w", encoding="utf-8") as f:
-                f.write(formatted_output)
-        
-        # Return both raw and formatted data
-        return {
+        # Create response data
+        response_data = {
             "raw": analysis_result,
             "formatted": formatted_output
         }
+        
+        # If output file is specified, write the formatted output to file
+        if output_file:
+            output_path = os.path.join(tempfile.gettempdir(), output_file)
+            with open(output_path, "w", encoding="utf-8") as f:
+                f.write(formatted_output)
+            
+            # Add file path to response
+            response_data["output_file"] = output_path
+        
+        return response_data
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
     finally:
