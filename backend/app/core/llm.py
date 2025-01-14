@@ -2,8 +2,9 @@ from typing import List
 from pydantic import BaseModel
 from openai import OpenAI
 from .data_types import TranscriptAnalysis
+import os
 
-client = OpenAI()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def analyze_transcript(transcript: str, word_counts: dict) -> TranscriptAnalysis:
     """Analyze transcript using OpenAI API and return structured analysis."""

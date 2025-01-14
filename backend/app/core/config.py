@@ -1,8 +1,11 @@
-from pydantic import BaseModel
+from pydantic_settings import BaseSettings
 from typing import List
 import os
+from dotenv import load_dotenv
 
-class Settings(BaseModel):
+load_dotenv()
+
+class Settings(BaseSettings):
     PROJECT_NAME: str = "AI-Ecosystem"
     API_V1_STR: str = "/api/v1"
     SECRET_KEY: str = os.getenv("SECRET_KEY", "your-secret-key-here")
