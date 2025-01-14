@@ -172,8 +172,11 @@ export default {
 <style scoped>
 .transcript-analysis-view {
   padding: 20px;
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  min-height: 100vh;
 }
 
 .input-area {
@@ -219,18 +222,33 @@ export default {
 }
 
 .analyze-btn {
-  background-color: #4CAF50;
-  color: white;
+  background-color: #81C784;
+  color: #1e1e1e;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.analyze-btn:hover {
+  background-color: #66BB6A;
+  transform: translateY(-1px);
 }
 
 .analyze-btn:disabled {
-  background-color: #cccccc;
+  background-color: #4c4c4c;
+  color: #8c8c8c;
   cursor: not-allowed;
 }
 
 .download-btn {
-  background-color: #2196F3;
-  color: white;
+  background-color: #64B5F6;
+  color: #1e1e1e;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.download-btn:hover {
+  background-color: #42A5F5;
+  transform: translateY(-1px);
 }
 
 .result-area {
@@ -242,11 +260,12 @@ export default {
 }
 
 .error-area {
-  color: #f44336;
+  color: #EF5350;
   margin-top: 10px;
-  padding: 10px;
+  padding: 15px;
   border-radius: 4px;
-  background-color: #ffebee;
+  background-color: rgba(239, 83, 80, 0.1);
+  border: 1px solid #EF5350;
 }
 
 .result-grid {
@@ -257,16 +276,17 @@ export default {
 }
 
 .result-card {
-  background: white;
+  background: #2d2d2d;
   border-radius: 8px;
   padding: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  border: 1px solid #3d3d3d;
 }
 
 .result-card h4 {
   margin-top: 0;
-  color: #2196F3;
-  border-bottom: 2px solid #e0e0e0;
+  color: #64B5F6;
+  border-bottom: 2px solid #3d3d3d;
   padding-bottom: 10px;
   margin-bottom: 15px;
 }
@@ -282,24 +302,27 @@ export default {
 }
 
 .word-item {
-  background: #e3f2fd;
+  background: #3d3d3d;
   padding: 5px 10px;
   border-radius: 15px;
   display: flex;
   gap: 8px;
   align-items: center;
+  margin-bottom: 8px;
 }
 
 .word {
   font-weight: bold;
+  color: #e0e0e0;
 }
 
 .count {
-  background: #2196F3;
-  color: white;
+  background: #64B5F6;
+  color: #1e1e1e;
   padding: 2px 8px;
   border-radius: 10px;
   font-size: 0.9em;
+  font-weight: bold;
 }
 
 .keywords {
@@ -309,11 +332,13 @@ export default {
 }
 
 .keyword-tag {
-  background: #e8f5e9;
-  color: #2e7d32;
+  background: #3d3d3d;
+  color: #81C784;
   padding: 5px 12px;
   border-radius: 15px;
   font-size: 0.9em;
+  border: 1px solid #81C784;
+  margin-bottom: 8px;
 }
 
 .highlights-list {
@@ -322,10 +347,11 @@ export default {
 }
 
 .highlights-list li {
-  padding: 10px;
-  background: #fafafa;
-  margin-bottom: 8px;
+  padding: 15px;
+  background: #3d3d3d;
+  margin-bottom: 12px;
   border-radius: 4px;
-  border-left: 4px solid #2196F3;
+  border-left: 4px solid #64B5F6;
+  line-height: 1.5;
 }
 </style>
