@@ -51,6 +51,17 @@ export default {
     return {
       releases: [
         {
+          version: 'v1.3.0',
+          date: 'January 14, 2025',
+          type: 'Feature',
+          severity: 'success',
+          changes: [
+            { type: 'feature', description: 'Added Tutorial page with getting started guide' },
+            { type: 'feature', description: 'Enhanced release history tracking' },
+            { type: 'enhancement', description: 'Improved documentation' }
+          ]
+        },
+        {
           version: 'v1.2.0',
           date: 'January 11, 2025',
           type: 'Feature',
@@ -68,6 +79,7 @@ export default {
           severity: 'info',
           changes: [
             { type: 'enhancement', description: 'Enhanced dashboard analytics' },
+            { type: 'enhancement', description: 'Improved transcript analysis accuracy' },
             { type: 'fix', description: 'Fixed navigation menu responsiveness' }
           ]
         },
@@ -79,6 +91,7 @@ export default {
           changes: [
             { type: 'feature', description: 'Initial release' },
             { type: 'feature', description: 'Basic dashboard functionality' },
+            { type: 'feature', description: 'Transcript analysis capabilities' },
             { type: 'feature', description: 'User authentication' }
           ]
         }
