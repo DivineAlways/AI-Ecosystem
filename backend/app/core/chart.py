@@ -2,6 +2,8 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
+import os
+import tempfile
 from .data_types import WordCounts
 
 def create_bar_chart(word_counts: WordCounts):
@@ -18,8 +20,10 @@ def create_bar_chart(word_counts: WordCounts):
     plt.gca().invert_yaxis()
 
     plt.tight_layout()
-    plt.savefig("bar_chart.png")
+    chart_path = os.path.join(tempfile.gettempdir(), "bar_chart.png")
+    plt.savefig(chart_path)
     plt.close()
+    return chart_path
 
 def create_pie_chart(word_counts: WordCounts):
     """Create a pie chart of word counts."""
@@ -31,8 +35,10 @@ def create_pie_chart(word_counts: WordCounts):
     plt.title("Word Counts Pie Chart")
 
     plt.tight_layout()
-    plt.savefig("pie_chart.png")
+    chart_path = os.path.join(tempfile.gettempdir(), "pie_chart.png")
+    plt.savefig(chart_path)
     plt.close()
+    return chart_path
 
 def create_line_chart(word_counts: WordCounts):
     """Create a line chart of word counts."""
@@ -47,5 +53,7 @@ def create_line_chart(word_counts: WordCounts):
     plt.title("Word Counts Line Chart")
 
     plt.tight_layout()
-    plt.savefig("line_chart.png")
+    chart_path = os.path.join(tempfile.gettempdir(), "line_chart.png")
+    plt.savefig(chart_path)
     plt.close()
+    return chart_path

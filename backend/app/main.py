@@ -4,6 +4,9 @@ import os
 import tempfile
 from .core.config import settings
 from .core.output_format import format_output
+from .core.word_counter import word_counter
+from .core.llm import analyze_transcript
+from .core.chart import create_bar_chart, create_pie_chart, create_line_chart
 
 app = FastAPI(title=settings.PROJECT_NAME)
 
@@ -56,15 +59,15 @@ async def analyze_transcript(
         word_count_result = word_counter(text_content, min_count_threshold)
         
         # Generate charts if requested
+        chart_path = None
         if chart_type:
-            from .core.chart import create_bar_chart, create_pie_chart, create_line_chart
             chart_functions = {
                 'bar': create_bar_chart,
                 'pie': create_pie_chart,
                 'line': create_line_chart
             }
             if chart_type in chart_functions:
-                chart_functions[chart_type](word_count_result)
+                chart_path = chart_functions[chart_type](word_count_result)
         
         # Use LLM for advanced analysis
         from .core.llm import analyze_transcript
@@ -86,7 +89,8 @@ async def analyze_transcript(
         # Create response data
         response_data = {
             "raw": analysis_result,
-            "formatted": formatted_output
+            "formatted": formatted_output,
+            "chart_path": chart_path if chart_path else None
         }
         
         # If output file is specified, write the formatted output to file
