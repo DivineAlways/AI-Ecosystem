@@ -1,0 +1,12 @@
+prompt: "Improve the code organization and add proper error handling"
+coder_model: "gpt-4"
+evaluator_model: "gpt-4"
+max_iterations: 5
+execution_command: "pytest backend/tests/"
+context_editable:
+  - "backend/app/main.py"
+  - "backend/app/core/llm.py"
+context_read_only:
+  - "backend/requirements.txt"
+  - "backend/app/core/config.py"
+evaluator: "default"
