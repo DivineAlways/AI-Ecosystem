@@ -1,4 +1,4 @@
-from pydantic.v1.settings import BaseSettings
+from pydantic import BaseSettings
 from typing import List
 import os
 from dotenv import load_dotenv
