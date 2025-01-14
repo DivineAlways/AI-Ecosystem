@@ -29,6 +29,14 @@
     </div>
     <div v-if="analysisResult" class="result-area">
       <h3>Analysis Results:</h3>
+      <div v-if="analysisResult.word_counts">
+        <h4>Word Frequencies:</h4>
+        <ul>
+          <li v-for="(count, word) in analysisResult.word_counts" :key="word">
+            {{ word }}: {{ count }}
+          </li>
+        </ul>
+      </div>
       <div v-if="analysisResult.quick_summary">
         <h4>Quick Summary:</h4>
         <p>{{ analysisResult.quick_summary }}</p>
@@ -87,11 +95,15 @@ export default {
         const response = await axios.post('http://localhost:8000/analyze-transcript', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
-          }
+          },
+          responseType: 'json'
         });
         
-        // Always store the JSON response for display
-        this.analysisResult = response.data;
+        if (response.data) {
+          this.analysisResult = response.data;
+        } else {
+          throw new Error('No data received from server');
+        }
       } catch (err) {
         this.error = err.message || 'Failed to analyze transcript.';
       }
