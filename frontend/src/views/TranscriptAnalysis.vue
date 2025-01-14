@@ -111,22 +111,22 @@ export default {
       try {
         // Get formatted version for download
         const formatResponse = await axios.post('http://localhost:8000/analyze-transcript', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        responseType: this.outputFormat === 'json' ? 'json' : 'text'
-      });
-      
-      if (this.outputFormat === 'json') {
-        content = JSON.stringify(formatResponse.data, null, 2);
-        type = 'application/json';
-      } else if (this.outputFormat === 'yaml') {
-        content = formatResponse.data;
-        type = 'application/x-yaml';
-      } else {
-        content = formatResponse.data;
-        type = 'text/plain';
-      }
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          },
+          responseType: this.outputFormat === 'json' ? 'json' : 'text'
+        });
+        
+        if (this.outputFormat === 'json') {
+          content = JSON.stringify(formatResponse.data, null, 2);
+          type = 'application/json';
+        } else if (this.outputFormat === 'yaml') {
+          content = formatResponse.data;
+          type = 'application/x-yaml';
+        } else {
+          content = formatResponse.data;
+          type = 'text/plain';
+        }
       
       const blob = new Blob([content], { type });
       const url = window.URL.createObjectURL(blob);
