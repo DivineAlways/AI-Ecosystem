@@ -2,7 +2,7 @@ import os
 import tempfile
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-from core.config import settings
+from .core.config import settings
 from agentic_features.paicc_7.src.let_the_code_write_itself.main import analyze_transcript as paicc_analyze_transcript
 from agentic_features.paicc_7.src.let_the_code_write_itself.data_types import TranscriptAnalysis
 from pydantic import BaseModel
