@@ -7,6 +7,7 @@ from aider.coders import Coder
 from aider.models import Model
 from aider.io import InputOutput
 import logging
+import os
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -70,12 +71,12 @@ class Director:
 
     def _generate_code(self, prompt: str):
         """Generate code using Aider"""
-        model = Model(self.config.coder_model)
+        model = Model("gpt-4" if self.config.coder_model == "gpt-4o" else "gpt-3.5-turbo")
         coder = Coder.create(
             main_model=model,
             io=InputOutput(yes=True),
-            fnames=self.config.context_editable,
-            read_only_fnames=self.config.context_read_only,
+            fnames=[str(Path(os.getcwd()) / f) for f in self.config.context_editable],
+            read_only_fnames=[str(Path(os.getcwd()) / f) for f in self.config.context_read_only],
             auto_commits=False
         )
         coder.run(prompt)

@@ -11,7 +11,7 @@ class EvaluationResult(BaseModel):
 
 class Evaluator:
     def __init__(self, model: str):
-        self.model = model
+        self.model = "gpt-4" if model == "gpt-4o" else "gpt-3.5-turbo"  # Map model names
         self.client = OpenAI()
         
     def evaluate(self, 
