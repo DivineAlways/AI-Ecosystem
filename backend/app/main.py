@@ -7,6 +7,7 @@ from .core.output_format import format_output
 from .core.word_counter import word_counter
 from .core.llm import analyze_transcript
 from .core.chart import create_bar_chart, create_pie_chart, create_line_chart
+from .core.data_types import TranscriptAnalysis
 
 app = FastAPI(title=settings.PROJECT_NAME)
 
