@@ -87,9 +87,10 @@ export default {
         const response = await axios.post('http://localhost:8000/analyze-transcript', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
-          },
-          responseType: this.outputFormat === 'json' ? 'json' : 'text'
+          }
         });
+        
+        // Always store the JSON response for display
         this.analysisResult = response.data;
       } catch (err) {
         this.error = err.message || 'Failed to analyze transcript.';
@@ -102,14 +103,23 @@ export default {
       let filename = `analysis-result.${this.outputFormat}`;
       let type = 'text/plain';
       
+      // Get formatted version for download
+      const formatResponse = await axios.post('http://localhost:8000/analyze-transcript', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        responseType: this.outputFormat === 'json' ? 'json' : 'text'
+      });
+      
       if (this.outputFormat === 'json') {
-        content = JSON.stringify(this.analysisResult, null, 2);
+        content = JSON.stringify(formatResponse.data, null, 2);
         type = 'application/json';
       } else if (this.outputFormat === 'yaml') {
-        content = this.analysisResult; // Already in YAML format
+        content = formatResponse.data;
         type = 'application/x-yaml';
       } else {
-        content = this.analysisResult; // Text format
+        content = formatResponse.data;
+        type = 'text/plain';
       }
       
       const blob = new Blob([content], { type });
