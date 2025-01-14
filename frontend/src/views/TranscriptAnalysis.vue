@@ -96,15 +96,21 @@ export default {
         this.error = err.message || 'Failed to analyze transcript.';
       }
     },
-    downloadResult() {
+    async downloadResult() {
       if (!this.analysisResult) return;
       
       let content = '';
       let filename = `analysis-result.${this.outputFormat}`;
       let type = 'text/plain';
       
-      // Get formatted version for download
-      const formatResponse = await axios.post('http://localhost:8000/analyze-transcript', formData, {
+      // Create form data for the download request
+      const formData = new FormData();
+      formData.append('transcript', this.file);
+      formData.append('output_format', this.outputFormat);
+      
+      try {
+        // Get formatted version for download
+        const formatResponse = await axios.post('http://localhost:8000/analyze-transcript', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
