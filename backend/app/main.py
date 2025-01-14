@@ -33,8 +33,10 @@ async def root():
         400: {"description": "Invalid input"}
     })
 @retry(
-    stop=stop_after_attempt(3),
-    wait=wait_exponential(multiplier=1, min=4, max=10)
+    stop=stop_after_attempt(5),
+    wait=wait_exponential(multiplier=1, min=4, max=30),
+    retry=retry_if_exception_type((httpx.TimeoutException, httpx.NetworkError, httpx.ConnectError)),
+    reraise=False
 )
 async def analyze_transcript(
     transcript: UploadFile = File(...),

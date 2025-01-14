@@ -4,14 +4,17 @@ from openai import OpenAI
 from .data_types import TranscriptAnalysis
 import os
 import time
-from tenacity import retry, stop_after_attempt, wait_exponential
+import httpx
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"), 
+                timeout=httpx.Timeout(30.0, read=60.0, write=10.0, connect=10.0))
 
 @retry(
-    stop=stop_after_attempt(3),
-    wait=wait_exponential(multiplier=1, min=4, max=10),
-    reraise=True
+    stop=stop_after_attempt(5),
+    wait=wait_exponential(multiplier=1, min=4, max=30),
+    retry=retry_if_exception_type((httpx.TimeoutException, httpx.NetworkError, httpx.ConnectError)),
+    reraise=False
 )
 def analyze_transcript(transcript: str, word_counts: dict) -> TranscriptAnalysis:
     """Analyze transcript using OpenAI API and return structured analysis."""
