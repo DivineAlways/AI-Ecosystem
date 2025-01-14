@@ -15,7 +15,8 @@
     "vue-router": "^4.2.5",
     "vuex": "^4.1.0",
     "primevue": "^3.45.0",
-    "primeicons": "^6.0.1"
+    "primeicons": "^6.0.1",
+    "axios": "^1.6.2"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.5.0",
